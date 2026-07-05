@@ -1,0 +1,32 @@
+# Secrets
+.env
+
+# Local working notes — not part of the repo
+ENGRAM_*.md
+local/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Data / runtime artifacts
+*.sqlite3
+*.db
+metrics/*.jsonl
+qdrant_storage/
+screenshots/
+bench/out/
+
+# Node
+node_modules/
+dist/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

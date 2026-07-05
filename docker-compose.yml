@@ -1,0 +1,17 @@
+# Engram stack — services come online phase by phase.
+# Phase 1: qdrant + api · Phase 2: demo-site · Phase 4: ui/landing behind nginx.
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+
+  # api:          # Phase 1 — FastAPI + MCP SSE
+  # demo-site:    # Phase 2 — Skyfinder (SKYFINDER_VERSION=v1|v2)
+  # nginx:        # Phase 4 — fronts api + ui + landing
+
+volumes:
+  qdrant_storage:
