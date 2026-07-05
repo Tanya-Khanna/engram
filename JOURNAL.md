@@ -20,3 +20,19 @@
   ECS placement isn't cosmetic, it's the latency budget.
 - Embeddings got a 3-tier fallback (DashScope → local bge → hash vectors) so
   tests and offline dev never block on the API.
+
+## Phase 2 — July 5 (browser agent, cold + warm)
+- First cold run looped: Skyfinder's placeholders (SFO/NRT) matched the task,
+  and the model read grey placeholder text as filled values — clicked Search
+  3× into HTML5 validation. Cycle detection aborted cleanly (guardrail earned
+  its keep on day one). Fix: DOM snapshot now reports value= and placeholder=
+  as separate facts; screenshots can't be trusted for input state.
+- Consolidation found the URL shortcut unprompted: 5-step exploration →
+  goto /results?from={origin}&to={dest}&date={date} + extract. The Almanac
+  insight, automated by qwen3.7-max.
+- Headline numbers, laptop: Skyfinder 42.7s/11,447 tok cold → 6.2s/1,457 tok
+  warm (7×/8×). books.toscrape.com 32.4s/5,809 → 8.8s/1,326. Warm latency is
+  ~2 Singapore round-trips; ECS placement will cut it under 4s.
+- Procedure ids now hash steps too: a relearn after a site change creates a
+  new procedure that supersedes the broken one instead of overwriting its
+  failure history. Caught by a test, kept as a design rule.
