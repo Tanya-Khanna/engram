@@ -5,31 +5,49 @@ Ubuntu 24.04 LTS, 40 GB disk. VPC + public IP (pay-by-traffic).
 Security group: 22 (home IP only), 80, 443 open; 8080 (home IP only until demo).
 Key-pair login; password auth disabled.
 
-> Fill in each block below with the commands actually run, as they are run.
-> This file is a judged artifact — it must reproduce the instance.
-
 ## 1. Base packages
 
 ```bash
-# TODO: paste exact commands (Docker + Compose plugin per hackathon resource
-# doc, Python 3.11, git, Node 20)
+sudo apt-get update && sudo apt-get upgrade -y
+
+# Docker + Compose plugin (official convenience script)
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker $USER && newgrp docker
+
+# Python 3.11 (Ubuntu 24.04 ships 3.12; project pins 3.11)
+sudo add-apt-repository -y ppa:deadsnakes/ppa
+sudo apt-get install -y python3.11 python3.11-venv python3.11-dev git
+
+# Node 20
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+sudo apt-get install -y nodejs
 ```
 
-## 2. Clone + configure
+## 2. Harden SSH (after confirming key login works)
 
 ```bash
-git clone https://github.com/<user>/engram.git
+sudo sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+sudo systemctl restart ssh
+```
+
+## 3. Clone + configure
+
+```bash
+git clone https://github.com/Tanya-Khanna/engram.git
 cd engram
-cp .env.example .env   # then set DASHSCOPE_API_KEY
+cp .env.example .env
+# then edit .env and set DASHSCOPE_API_KEY (pay-as-you-go sk- key)
 ```
 
-## 3. Proof of deployment
+## 4. Proof of deployment
 
 ```bash
-python3 deploy/alibaba_proof.py
+python3.11 -m venv .venv && source .venv/bin/activate
+pip install openai
+python deploy/alibaba_proof.py
 ```
 
-## 4. Services
+## 5. Services
 
 ```bash
 docker compose up -d
