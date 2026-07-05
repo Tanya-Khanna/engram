@@ -124,7 +124,9 @@ overwriting it, so failure history survives.
 Reproduce with `make demo-site` running, then `make bench`. Real runs, no
 simulation except chart 3's clock.
 
-![cold vs warm](docs/img/chart1_cold_vs_warm.png)
+![cold vs warm tokens](docs/img/chart1_cold_vs_warm.png)
+
+![cold vs warm seconds](docs/img/chart1b_cold_vs_warm_seconds.png)
 
 ![recall under budget](docs/img/chart2_recall_budget.png)
 
