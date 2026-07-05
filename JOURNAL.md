@@ -50,3 +50,16 @@
 - `make age-memories DAYS=5` simulates elapsed time honestly, it rewinds
   last_verified rather than faking freshness numbers, so the decay math on
   screen is the real function.
+
+## Phase 4 (early) , July 5 (chat UI + voice plumbing)
+- FastAPI's threadpool broke the shared store: SQLite connections are
+  thread-bound by default. check_same_thread=False plus an RLock fixed it;
+  found by driving the UI with Playwright, not by unit tests.
+- Audio does not exist on the compatible-mode endpoint (404). It lives on
+  the native DashScope API. cosyvoice-v3-plus wants a websocket session;
+  qwen3-tts-flash does the same job in one request.
+- Tested ASR without a microphone by feeding TTS output back into it. The
+  video's key line came back byte-for-byte: "Heads up, Skyfinder changed
+  overnight. I already relearned it."
+- Browser disk cache served stale CSS through a server restart; version
+  tags on static asset URLs ended it.
