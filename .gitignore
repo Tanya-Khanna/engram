@@ -17,7 +17,7 @@ venv/
 # Data / runtime artifacts
 *.sqlite3
 *.db
-metrics/*.jsonl
+var/
 qdrant_storage/
 screenshots/
 bench/out/
