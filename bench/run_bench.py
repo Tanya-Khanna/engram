@@ -134,7 +134,7 @@ def suite_lifecycle() -> None:
 
     born = datetime(2026, 7, 1, tzinfo=timezone.utc)
     last_verified, failures, successes = born, 0, 4
-    events = {3.0: "reverified", 6.0: "site changed — replays fail",
+    events = {3.0: "reverified", 6.0: "site changed: replays fail",
               6.5: "relearned → v2", 9.5: "reverified"}
     rows = []
     step = 0.25

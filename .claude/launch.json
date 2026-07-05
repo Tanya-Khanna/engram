@@ -8,6 +8,12 @@
       "port": 8080
     },
     {
+      "name": "landing",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "preview", "--prefix", "landing", "--", "--port", "4173"],
+      "port": 4173
+    },
+    {
       "name": "skyfinder",
       "runtimeExecutable": ".venv/bin/uvicorn",
       "runtimeArgs": ["serve:app", "--app-dir", "demo-site", "--port", "8090"],

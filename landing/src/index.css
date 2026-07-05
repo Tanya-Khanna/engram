@@ -1,0 +1,197 @@
+/* Terminal brutalist. One face, two inks, one accent. No radius, no shadow,
+   no gradient, anywhere. */
+
+:root {
+  --paper: #f2efe6;
+  --ink: #141414;
+  --dim: #6b6b66;
+  --accent: #d84a05;
+  --screen: #101010;
+  --phosphor: #e8e4d8;
+}
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+  border-radius: 0 !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+a {
+  color: var(--ink);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+a:hover {
+  color: var(--accent);
+}
+
+.rule {
+  border: 0;
+  border-top: 2px solid var(--ink);
+}
+.rule.double {
+  border-top: 6px double var(--ink);
+}
+
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.label {
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 14px 0;
+}
+.section-head .no {
+  color: var(--accent);
+  font-weight: 700;
+}
+.section-head h2 {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.terminal {
+  background: var(--screen);
+  color: var(--phosphor);
+  border: 2px solid var(--ink);
+  padding: 18px 20px;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}
+.terminal .prompt {
+  color: var(--accent);
+}
+.terminal .out {
+  color: #9a958a;
+}
+.terminal .hot {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.1em;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.btn {
+  font: inherit;
+  font-size: 13px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 10px 16px;
+  cursor: pointer;
+}
+.btn:hover,
+.btn.primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn.primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 2px solid var(--ink);
+}
+.grid2 > div {
+  padding: 22px;
+}
+.grid2 > div + div {
+  border-left: 2px solid var(--ink);
+}
+@media (max-width: 720px) {
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+  .grid2 > div + div {
+    border-left: 0;
+    border-top: 2px solid var(--ink);
+  }
+}
+
+.bignum {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.bignum.accent {
+  color: var(--accent);
+}
+
+.deflist dt {
+  font-weight: 700;
+  margin-top: 18px;
+}
+.deflist dd {
+  margin-left: 0;
+  color: var(--dim);
+}
+
+.figure {
+  border: 2px solid var(--ink);
+}
+.figure img {
+  display: block;
+  width: 100%;
+  background: #fff;
+}
+.figure figcaption {
+  border-top: 2px solid var(--ink);
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.ascii-logo {
+  font-size: clamp(6px, 1.6vw, 14px);
+  line-height: 1.15;
+  font-weight: 700;
+  white-space: pre;
+  overflow-x: auto;
+}
