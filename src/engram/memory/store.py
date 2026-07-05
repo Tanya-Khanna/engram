@@ -171,6 +171,12 @@ class MemoryStore:
                  memory_id),
             )
 
+    def set_status(self, memory_id: str, status: str) -> None:
+        with self.db:
+            self.db.execute(
+                "UPDATE memories SET status=? WHERE id=?", (status, memory_id)
+            )
+
     def mark_superseded(self, old_id: str, new_id: str) -> None:
         memory = self.get(old_id)
         memory.superseded_by = new_id

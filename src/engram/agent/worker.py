@@ -47,13 +47,18 @@ def run_task(
                 broken_id = hit.id
                 # fall THROUGH to cold — resilience is the demo
 
-    episode = vision_loop.run_episode(task, start_url, headless=headless)
+    episode = vision_loop.run_episode(
+        task, start_url, headless=headless,
+        extra_context=_preference_context(store, task),
+    )
     store.put(episode)
     procedure_id = None
     if episode.outcome == "success":
         procedure = consolidate_mod.consolidate(episode)
         store.put(procedure)
         procedure_id = procedure.id
+        episode.consolidated = True
+        store.put(episode)
         if broken_id and broken_id != procedure.id:
             store.mark_superseded(broken_id, procedure.id)
     return _record(
@@ -61,6 +66,13 @@ def run_task(
         result={"outcome": episode.outcome, "summary": episode.summary},
         episode=episode.id, procedure=procedure_id,
     )
+
+
+def _preference_context(store: MemoryStore, task: str) -> str | None:
+    packed = recall(store, task, kinds=("preference",), budget=200)
+    if not packed.items:
+        return None
+    return "Known user preferences:\n" + "\n".join(i.text for i in packed.items)
 
 
 def _best_procedure(store: MemoryStore, task: str, domain: str) -> Procedure | None:

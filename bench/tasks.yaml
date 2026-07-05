@@ -1,0 +1,18 @@
+# The 5 benchmark tasks: 3 Skyfinder variants + 2 on books.toscrape.com.
+# Skyfinder must be running: make demo-site
+tasks:
+  - id: sky-sfo-nrt
+    task: find the cheapest flight from SFO to NRT on 2026-07-20
+    url: http://127.0.0.1:8090
+  - id: sky-lax-cdg
+    task: find the cheapest flight from LAX to CDG on 2026-08-02
+    url: http://127.0.0.1:8090
+  - id: sky-sea-sin
+    task: find the cheapest flight from SEA to SIN on 2026-07-28
+    url: http://127.0.0.1:8090
+  - id: books-sharp-objects
+    task: find the price of the book Sharp Objects
+    url: http://books.toscrape.com
+  - id: books-light-attic
+    task: find the price of the book A Light in the Attic
+    url: http://books.toscrape.com

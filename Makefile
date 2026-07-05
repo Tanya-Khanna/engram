@@ -21,17 +21,20 @@ demo-cold:       ## vision-loop TASK cold on Skyfinder, consolidate + store Proc
 demo-warm:       ## same TASK from memory: recall → replay → flash-verify
 	.venv/bin/python -m engram.agent.worker --task "$(TASK)" --url $(SKYFINDER_URL)
 
-curator:         ## run one Curator sweep now: consolidate, decay, reverify, relearn (Phase 3)
-	@echo "not built yet — Phase 3"
+curator:         ## run one Curator sweep now: consolidate, decay, reverify, relearn
+	.venv/bin/python -m engram.curator.jobs
 
-bench:           ## run benchmark suite, export 3 charts to bench/out/ (Phase 3)
-	@echo "not built yet — Phase 3"
+bench:           ## run benchmark suites (needs demo-site running), export 3 charts
+	.venv/bin/python bench/run_bench.py all && .venv/bin/python bench/charts.py
 
 serve:           ## FastAPI: /memories /recall /metrics (+/task /chat in Phase 2+)
 	.venv/bin/uvicorn engram.server.api:app --host 0.0.0.0 --port 8080
 
 serve-mcp:       ## MCP server over SSE on :8765 (stdio: python -m engram.server.mcp_server)
 	.venv/bin/python -m engram.server.mcp_server --sse
+
+age-memories:    ## demo: simulate DAYS of elapsed time (default 5)
+	.venv/bin/python -m engram.curator.jobs --age-days $(or $(DAYS),5)
 
 break-site:      ## swap Skyfinder v1 → v2 — the staleness demo
 	echo v2 > demo-site/.version

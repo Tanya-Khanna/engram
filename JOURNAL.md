@@ -36,3 +36,17 @@
 - Procedure ids now hash steps too: a relearn after a site change creates a
   new procedure that supersedes the broken one instead of overwriting its
   failure history. Caught by a test, kept as a design rule.
+
+## Phase 3 — July 5 (Curator + benchmarks)
+- The whole staleness lifecycle ran live on the first try: decay → stale →
+  probe fail → invalid → relearn → diff in the overnight report showing the
+  exact param rename (origin→from). The 🌙 report is real, not a mockup.
+- Design change while rehearsing: a reverify probe failing against the live
+  site now marks the procedure invalid immediately (the plan was right, my
+  two-consecutive-failures version needed two sweeps to converge on camera).
+- Two self-heal paths coexist and both got exercised: worker fall-through
+  (fixes at use-time, 52.7s recover-and-relearn) and Curator relearn
+  (fixes overnight, before anyone hits the broken memory).
+- `make age-memories DAYS=5` simulates elapsed time honestly — it rewinds
+  last_verified rather than faking freshness numbers, so the decay math on
+  screen is the real function.

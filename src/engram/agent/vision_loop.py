@@ -35,6 +35,7 @@ def run_episode(
     session_id: str = "cold",
     headless: bool = True,
     max_steps: int = guardrails.MAX_STEPS,
+    extra_context: str | None = None,
 ) -> Episode:
     """Explore a task with vision; always returns a stored-shape Episode."""
     episode = Episode(
@@ -61,7 +62,7 @@ def run_episode(
             browser.screenshot_save(str(shots_dir / f"step_{step_no}.jpg"))
             response = llm.complete(
                 "vision-loop",
-                _messages(task, browser, screenshot, episode.trajectory, warning),
+                _messages(task, browser, screenshot, episode.trajectory, warning, extra_context),
                 model_tier="vision",
             )
             tokens += response.usage.total_tokens
@@ -132,6 +133,7 @@ def _messages(
     screenshot_b64: str,
     trajectory: list[dict[str, Any]],
     warning: str | None,
+    extra_context: str | None = None,
 ) -> list[dict[str, Any]]:
     history = "\n".join(
         f"{i}. {s['action']} {s['target']}"
@@ -143,6 +145,8 @@ def _messages(
         f"Task: {task}\nCurrent URL: {browser.url}\n\nActions so far:\n{history}\n\n"
         f"DOM snapshot:\n{browser.dom_snapshot()}"
     )
+    if extra_context:
+        text = f"{extra_context}\n\n{text}"
     if warning:
         text += f"\n\n{warning}"
     return [
