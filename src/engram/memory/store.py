@@ -11,6 +11,7 @@ import json
 import logging
 import os
 import sqlite3
+import threading
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -59,10 +60,13 @@ class MemoryStore:
         self.data_dir = data_dir or metrics.data_dir()
         self.qdrant = self._connect_qdrant(qdrant_url or os.getenv("QDRANT_URL"))
         self._dims: dict[str, int] = {}
-        self.db = sqlite3.connect(self.data_dir / "engram.db")
+        # one store instance is shared across server threads: allow cross-
+        # thread use and serialize all SQLite access with a re-entrant lock
+        self._lock = threading.RLock()
+        self.db = sqlite3.connect(self.data_dir / "engram.db", check_same_thread=False)
         self.db.row_factory = sqlite3.Row
-        self.db.execute(_SCHEMA)
-        self.db.commit()
+        with self._lock, self.db:
+            self.db.execute(_SCHEMA)
 
     def _connect_qdrant(self, url: str | None) -> QdrantClient:
         if url:
@@ -108,7 +112,7 @@ class MemoryStore:
             "payload": json.dumps(payload),
             "created_at": utcnow().isoformat(),
         }
-        with self.db:
+        with self._lock, self.db:
             self.db.execute(
                 """INSERT INTO memories (id, kind, domain, label, freshness,
                        success_count, failure_count, last_verified, last_used,
@@ -147,7 +151,7 @@ class MemoryStore:
         )
         new_status = decay.status(memory.freshness, consecutive)
         self.put(memory)
-        with self.db:
+        with self._lock, self.db:
             self.db.execute(
                 "UPDATE memories SET consecutive_failures=?, status=? WHERE id=?",
                 (consecutive, new_status, memory_id),
@@ -164,7 +168,7 @@ class MemoryStore:
         memory = self.get(memory_id)
         memory.freshness = value
         self.put(memory)
-        with self.db:
+        with self._lock, self.db:
             self.db.execute(
                 "UPDATE memories SET status=? WHERE id=?",
                 (decay.status(value, self._row(memory_id)["consecutive_failures"]),
@@ -172,7 +176,7 @@ class MemoryStore:
             )
 
     def set_status(self, memory_id: str, status: str) -> None:
-        with self.db:
+        with self._lock, self.db:
             self.db.execute(
                 "UPDATE memories SET status=? WHERE id=?", (status, memory_id)
             )
@@ -185,9 +189,10 @@ class MemoryStore:
     # -- reads -------------------------------------------------------------
 
     def _row(self, memory_id: str) -> sqlite3.Row:
-        row = self.db.execute(
-            "SELECT * FROM memories WHERE id=?", (memory_id,)
-        ).fetchone()
+        with self._lock:
+            row = self.db.execute(
+                "SELECT * FROM memories WHERE id=?", (memory_id,)
+            ).fetchone()
         if row is None:
             raise KeyError(f"memory not found: {memory_id}")
         return row
@@ -207,12 +212,13 @@ class MemoryStore:
         if min_freshness is not None:
             clauses.append("freshness>=?")
             args.append(min_freshness)
-        rows = self.db.execute(
-            "SELECT id, kind, domain, label, freshness, status, success_count,"
-            " failure_count, version, superseded_by FROM memories"
-            f" WHERE {' AND '.join(clauses)} ORDER BY freshness DESC",
-            args,
-        ).fetchall()
+        with self._lock:
+            rows = self.db.execute(
+                "SELECT id, kind, domain, label, freshness, status, success_count,"
+                " failure_count, version, superseded_by FROM memories"
+                f" WHERE {' AND '.join(clauses)} ORDER BY freshness DESC",
+                args,
+            ).fetchall()
         return [dict(r) for r in rows]
 
     def search(

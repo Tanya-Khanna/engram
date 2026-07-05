@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engram</title>
+<link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>Engram</h1>
+    <p class="tagline">Muscle memory for AI agents. Learned once, remembered everywhere, kept fresh automatically.</p>
+  </header>
+  <section id="thread"></section>
+  <form id="composer">
+    <input id="box" placeholder="Give me a task, e.g. find the cheapest flight from SFO to NRT on 2026-07-20" autocomplete="off">
+    <button type="submit" id="send">Send</button>
+  </form>
+</main>
+<aside>
+  <div class="panel" id="report-panel">
+    <h2>Curator report</h2>
+    <pre id="report">no sweep yet</pre>
+  </div>
+  <div class="panel">
+    <h2>Last turn</h2>
+    <div class="counters">
+      <div class="counter"><span id="c-path">–</span><label>path</label></div>
+      <div class="counter"><span id="c-seconds">–</span><label>seconds</label></div>
+      <div class="counter"><span id="c-tokens">–</span><label>tokens</label></div>
+    </div>
+    <h2>Recalled memories</h2>
+    <ul id="recalled"><li class="dim">nothing recalled yet</li></ul>
+  </div>
+  <div class="panel">
+    <h2>Memory store</h2>
+    <ul id="store"></ul>
+  </div>
+</aside>
+<script src="/ui/app.js"></script>
+</body>
+</html>

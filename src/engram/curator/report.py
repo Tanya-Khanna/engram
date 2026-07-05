@@ -41,7 +41,7 @@ def render_report(sweep: dict[str, Any]) -> str:
     for action in sweep["decayed"]:
         lines.append(f"  • decay: {action['id']} {action['note']}")
     for action in verified + failed_probe:
-        lines.append(f"  • reverify: {action['id']} — {action['note']}")
+        lines.append(f"  • reverify: {action['id']}: {action['note']}")
     for action in relearned:
         lines.append(f"  • relearned {action['id']} → {action['new_id']} ({action['note']}):")
         lines += [f"      {d}" for d in action.get("diff", [])]

@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" font-family="system-ui, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#475569"/>
+    </marker>
+  </defs>
+  <style>
+    .box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 10; }
+    .zone { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5; stroke-dasharray: 6 4; rx: 14; }
+    .title { font-size: 15px; font-weight: 600; fill: #0f172a; }
+    .sub { font-size: 11.5px; fill: #475569; }
+    .model { font-size: 11px; font-weight: 600; fill: #0d9488; }
+    .zonelabel { font-size: 12px; font-weight: 600; fill: #64748b; letter-spacing: .08em; }
+    .edge { stroke: #475569; stroke-width: 1.6; fill: none; marker-end: url(#arrow); }
+  </style>
+
+  <!-- clients -->
+  <rect class="box" x="30" y="60" width="180" height="64" rx="10"/>
+  <text class="title" x="120" y="86" text-anchor="middle">Phone / Browser</text>
+  <text class="sub" x="120" y="106" text-anchor="middle">chat + voice UI</text>
+
+  <rect class="box" x="30" y="170" width="180" height="64" rx="10"/>
+  <text class="title" x="120" y="196" text-anchor="middle">Cursor / Claude Code</text>
+  <text class="sub" x="120" y="216" text-anchor="middle">any MCP client</text>
+
+  <!-- ECS zone -->
+  <rect class="zone" x="250" y="30" width="680" height="540" rx="14"/>
+  <text class="zonelabel" x="270" y="56">ALIBABA CLOUD ECS · SINGAPORE</text>
+
+  <!-- api -->
+  <rect class="box" x="280" y="80" width="190" height="74" rx="10"/>
+  <text class="title" x="375" y="106" text-anchor="middle">FastAPI</text>
+  <text class="sub" x="375" y="126" text-anchor="middle">/chat · /task · /metrics</text>
+  <text class="sub" x="375" y="142" text-anchor="middle">ASR in · CosyVoice out</text>
+
+  <!-- worker -->
+  <rect class="box" x="280" y="220" width="190" height="64" rx="10"/>
+  <text class="title" x="375" y="246" text-anchor="middle">Worker</text>
+  <text class="sub" x="375" y="266" text-anchor="middle">recall → replay | explore</text>
+
+  <!-- memory -->
+  <rect class="box" x="540" y="80" width="200" height="86" rx="10"/>
+  <text class="title" x="640" y="106" text-anchor="middle">MCP Memory Server</text>
+  <text class="sub" x="640" y="126" text-anchor="middle">recall · store · outcomes</text>
+  <text class="sub" x="640" y="144" text-anchor="middle">stdio + SSE</text>
+
+  <rect class="box" x="790" y="80" width="120" height="86" rx="10"/>
+  <text class="title" x="850" y="112" text-anchor="middle">Qdrant</text>
+  <text class="title" x="850" y="136" text-anchor="middle">SQLite</text>
+
+  <!-- warm path -->
+  <rect class="box" x="540" y="220" width="200" height="74" rx="10"/>
+  <text class="title" x="640" y="246" text-anchor="middle">Replay (warm)</text>
+  <text class="sub" x="640" y="264" text-anchor="middle">deterministic, no LLM</text>
+  <text class="model" x="640" y="282" text-anchor="middle">verify: qwen3.6-flash</text>
+
+  <!-- cold path -->
+  <rect class="box" x="540" y="330" width="200" height="74" rx="10"/>
+  <text class="title" x="640" y="356" text-anchor="middle">Vision loop (cold)</text>
+  <text class="sub" x="640" y="374" text-anchor="middle">screenshot + DOM → act</text>
+  <text class="model" x="640" y="392" text-anchor="middle">qwen3.7-plus</text>
+
+  <rect class="box" x="790" y="330" width="120" height="74" rx="10"/>
+  <text class="title" x="850" y="360" text-anchor="middle">Playwright</text>
+  <text class="sub" x="850" y="378" text-anchor="middle">chromium</text>
+
+  <!-- consolidation -->
+  <rect class="box" x="540" y="440" width="200" height="74" rx="10"/>
+  <text class="title" x="640" y="466" text-anchor="middle">Consolidation</text>
+  <text class="sub" x="640" y="484" text-anchor="middle">trajectory → procedure</text>
+  <text class="model" x="640" y="502" text-anchor="middle">qwen3.7-max</text>
+
+  <!-- curator -->
+  <rect class="box" x="280" y="380" width="190" height="134" rx="10"/>
+  <text class="title" x="375" y="408" text-anchor="middle">Curator</text>
+  <text class="sub" x="375" y="428" text-anchor="middle">decay sweep</text>
+  <text class="sub" x="375" y="444" text-anchor="middle">reverify · relearn</text>
+  <text class="model" x="375" y="464" text-anchor="middle">probes: qwen3.6-flash</text>
+  <text class="model" x="375" y="482" text-anchor="middle">relearn: plus + max</text>
+  <text class="sub" x="375" y="502" text-anchor="middle">🌙 overnight report</text>
+
+  <!-- edges -->
+  <path class="edge" d="M210 92 H272"/>
+  <path class="edge" d="M210 202 C240 202, 480 130, 532 122"/>
+  <path class="edge" d="M375 154 V212"/>
+  <path class="edge" d="M470 240 C500 230, 510 180, 532 150"/>
+  <path class="edge" d="M740 123 H782"/>
+  <path class="edge" d="M470 252 H532"/>
+  <path class="edge" d="M470 264 C505 280, 505 330, 532 350"/>
+  <path class="edge" d="M740 367 H782"/>
+  <path class="edge" d="M640 404 V432"/>
+  <path class="edge" d="M640 440 C640 420, 660 190, 648 174"/>
+  <path class="edge" d="M375 372 V292"/>
+  <path class="edge" d="M470 420 C520 400, 560 180, 560 166"/>
+
+  <text class="sub" x="497" y="238">replay</text>
+  <text class="sub" x="480" y="305">explore</text>
+  <text class="sub" x="748" y="115">vectors +</text>
+  <text class="sub" x="748" y="158">metadata</text>
+  <text class="sub" x="652" y="425">store</text>
+</svg>

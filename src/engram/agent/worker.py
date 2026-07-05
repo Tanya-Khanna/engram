@@ -34,14 +34,16 @@ def run_task(
     tokens_before = _session_tokens()
 
     broken_id: str | None = None
+    recalled: list[dict[str, Any]] = []
     if not force_cold:
-        hit = _best_procedure(store, task, domain)
+        hit, recalled = _best_procedure(store, task, domain)
         if hit is not None:
             try:
                 params = _extract_params(task, hit)
                 result = replay_mod.replay(hit, params=params, task=task, headless=headless)
                 store.report_outcome(hit.id, success=True)
-                return _record("warm", task, start, tokens_before, result=result, procedure=hit.id)
+                return _record("warm", task, start, tokens_before, result=result,
+                               procedure=hit.id, recalled=recalled)
             except replay_mod.ProcedureBroken as exc:
                 store.report_outcome(hit.id, success=False, notes=str(exc))
                 broken_id = hit.id
@@ -64,7 +66,7 @@ def run_task(
     return _record(
         "cold", task, start, tokens_before,
         result={"outcome": episode.outcome, "summary": episode.summary},
-        episode=episode.id, procedure=procedure_id,
+        episode=episode.id, procedure=procedure_id, recalled=recalled,
     )
 
 
@@ -75,14 +77,22 @@ def _preference_context(store: MemoryStore, task: str) -> str | None:
     return "Known user preferences:\n" + "\n".join(i.text for i in packed.items)
 
 
-def _best_procedure(store: MemoryStore, task: str, domain: str) -> Procedure | None:
+def _best_procedure(
+    store: MemoryStore, task: str, domain: str
+) -> tuple[Procedure | None, list[dict[str, Any]]]:
+    """Best fresh hit plus what was recalled (the UI sidebar shows this)."""
     packed = recall(store, task, domain=domain, kinds=("procedure",), budget=4000)
+    recalled = [
+        {"id": i.memory_id, "kind": i.kind, "freshness": round(i.freshness, 3),
+         "score": i.score}
+        for i in packed.items
+    ]
     for item in packed.items:
         if item.freshness >= STALE_THRESHOLD:
             memory = store.get(item.memory_id)
             if isinstance(memory, Procedure):
-                return memory
-    return None
+                return memory, recalled
+    return None, recalled
 
 
 def _extract_params(task: str, procedure: Procedure) -> dict[str, str]:

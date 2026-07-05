@@ -1,7 +1,7 @@
 [project]
 name = "engram"
 version = "0.1.0"
-description = "Muscle memory for AI agents — learned once, remembered everywhere, kept fresh automatically."
+description = "Muscle memory for AI agents: learned once, remembered everywhere, kept fresh automatically."
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.11"

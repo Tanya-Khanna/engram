@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "engram-api",
+      "runtimeExecutable": ".venv/bin/uvicorn",
+      "runtimeArgs": ["engram.server.api:app", "--port", "8080"],
+      "port": 8080
+    },
+    {
+      "name": "skyfinder",
+      "runtimeExecutable": ".venv/bin/uvicorn",
+      "runtimeArgs": ["serve:app", "--app-dir", "demo-site", "--port", "8090"],
+      "port": 8090
+    }
+  ]
+}

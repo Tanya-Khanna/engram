@@ -84,14 +84,14 @@ def reverify_sweep(store: MemoryStore, headless: bool = True) -> list[dict[str, 
             replay_mod.replay(procedure, task=task, headless=headless)
             outcome = store.report_outcome(procedure.id, success=True, notes="reverified")
             actions.append({"job": "reverify", "id": procedure.id,
-                            "note": f"pass — freshness {outcome['freshness']:.2f}"})
+                            "note": f"pass, freshness {outcome['freshness']:.2f}"})
         except replay_mod.ProcedureBroken as exc:
             store.report_outcome(procedure.id, success=False, notes=str(exc))
             # a probe failing against the live site is definitive — straight
             # to the relearn queue, no second opinion needed
             store.set_status(procedure.id, "invalid")
             actions.append({"job": "reverify", "id": procedure.id,
-                            "note": f"FAIL ({exc}) — marked invalid"})
+                            "note": f"FAIL ({exc}), marked invalid"})
     return actions
 
 

@@ -2,16 +2,16 @@
 
 5 bullets per phase: what broke, what we learned.
 
-## Phase 0 — July 4 (compliance skeleton)
+## Phase 0, July 4 (compliance skeleton)
 - Repo scaffolded: CLAUDE.md, full src tree, proof file, MIT license,
   Makefile stubs.
-- Workspace API keys (`sk-ws-`) work fine on the compatible-mode endpoint —
+- Workspace API keys (`sk-ws-`) work fine on the compatible-mode endpoint;
   the format warning only applies to Token Plan (`sk-sp-`) keys.
 
-## Phase 1 — July 4–5 (memory engine + MCP)
+## Phase 1, July 4–5 (memory engine + MCP)
 - qwen3.6-flash runs in thinking mode by default: 142 reasoning tokens and
   10s latency for a 3-token answer. `enable_thinking: false` via extra_body
-  fixed it — now a first-class `think=` param on our llm wrapper. Would have
+  fixed it, now a first-class `think=` param on our llm wrapper. Would have
   silently destroyed the 2–4s warm-path budget in Phase 2.
 - No Docker on the dev laptop → qdrant-client's embedded local mode instead;
   same interface, zero infra. Docker Qdrant stays for ECS.
@@ -21,9 +21,9 @@
 - Embeddings got a 3-tier fallback (DashScope → local bge → hash vectors) so
   tests and offline dev never block on the API.
 
-## Phase 2 — July 5 (browser agent, cold + warm)
+## Phase 2, July 5 (browser agent, cold + warm)
 - First cold run looped: Skyfinder's placeholders (SFO/NRT) matched the task,
-  and the model read grey placeholder text as filled values — clicked Search
+  and the model read grey placeholder text as filled values, clicked Search
   3× into HTML5 validation. Cycle detection aborted cleanly (guardrail earned
   its keep on day one). Fix: DOM snapshot now reports value= and placeholder=
   as separate facts; screenshots can't be trusted for input state.
@@ -37,7 +37,7 @@
   new procedure that supersedes the broken one instead of overwriting its
   failure history. Caught by a test, kept as a design rule.
 
-## Phase 3 — July 5 (Curator + benchmarks)
+## Phase 3, July 5 (Curator + benchmarks)
 - The whole staleness lifecycle ran live on the first try: decay → stale →
   probe fail → invalid → relearn → diff in the overnight report showing the
   exact param rename (origin→from). The 🌙 report is real, not a mockup.
@@ -47,6 +47,6 @@
 - Two self-heal paths coexist and both got exercised: worker fall-through
   (fixes at use-time, 52.7s recover-and-relearn) and Curator relearn
   (fixes overnight, before anyone hits the broken memory).
-- `make age-memories DAYS=5` simulates elapsed time honestly — it rewinds
+- `make age-memories DAYS=5` simulates elapsed time honestly, it rewinds
   last_verified rather than faking freshness numbers, so the decay math on
   screen is the real function.
