@@ -52,6 +52,8 @@ async function submit(event) {
     working.remove();
     add("agent", record.reply || "done");
     transcript.push("agent: " + (record.reply || "done"));
+    if (voiceTurn && record.reply) speakReply(record.reply);
+    voiceTurn = false;
     add("meta", `${record.path} path · ${record.seconds}s · ${record.tokens} tokens`);
     document.getElementById("c-path").textContent = record.path;
     document.getElementById("c-seconds").textContent = record.seconds;
@@ -74,6 +76,61 @@ async function submit(event) {
 }
 
 document.getElementById("composer").addEventListener("submit", submit);
+
+// voice: hold the mic to record, release to transcribe and send.
+// replies to voice turns are spoken back via /api/tts.
+const mic = document.getElementById("mic");
+let recorder = null;
+let voiceTurn = false;
+
+async function speakReply(text) {
+  try {
+    const res = await fetch("/api/tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    await new Audio(URL.createObjectURL(await res.blob())).play();
+  } catch (err) {
+    console.warn("tts playback failed", err);
+  }
+}
+
+async function startRecording() {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  recorder = new MediaRecorder(stream);
+  const chunks = [];
+  recorder.ondataavailable = (e) => chunks.push(e.data);
+  recorder.onstop = async () => {
+    stream.getTracks().forEach((t) => t.stop());
+    mic.classList.remove("recording");
+    const blob = new Blob(chunks, { type: recorder.mimeType });
+    const working = add("agent working", "listening...");
+    try {
+      const res = await fetch("/api/asr", {
+        method: "POST",
+        headers: { "Content-Type": recorder.mimeType },
+        body: blob,
+      });
+      const { text } = await res.json();
+      working.remove();
+      if (text) {
+        box.value = text;
+        voiceTurn = true;
+        document.getElementById("composer").requestSubmit();
+      }
+    } catch (err) {
+      working.remove();
+      add("agent", "transcription failed: " + err);
+    }
+  };
+  recorder.start();
+  mic.classList.add("recording");
+}
+
+mic.addEventListener("mousedown", startRecording);
+mic.addEventListener("mouseup", () => recorder && recorder.state === "recording" && recorder.stop());
+mic.addEventListener("mouseleave", () => recorder && recorder.state === "recording" && recorder.stop());
 window.addEventListener("beforeunload", () => {
   if (transcript.length < 2) return;
   navigator.sendBeacon(

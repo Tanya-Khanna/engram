@@ -27,6 +27,11 @@ header h1 { font-size: 1.3rem; letter-spacing: .12em; color: var(--teal); }
   background: var(--teal); color: #042521; font-weight: 600; cursor: pointer;
 }
 #send:disabled { opacity: .5; }
+#mic {
+  padding: .7rem .9rem; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--panel); font-size: 1rem;
+}
+#mic.recording { background: var(--ember); border-color: var(--ember); }
 aside {
   border-left: 1px solid var(--line); padding: 1.2rem; overflow-y: auto;
   display: flex; flex-direction: column; gap: 1rem; background: #0d1526;

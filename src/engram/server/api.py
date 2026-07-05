@@ -10,8 +10,8 @@ import os
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -91,6 +91,28 @@ def chat(body: ChatMessage) -> dict[str, Any]:
     record = run_task(body.message, body.url or DEFAULT_TASK_URL, store=get_store())
     record["reply"] = _compose_reply(body.message, record)
     return record
+
+
+class TTSRequest(BaseModel):
+    text: str
+    voice: str = "Cherry"
+
+
+@app.post("/api/tts")
+def tts(body: TTSRequest) -> Response:
+    from engram.voice.tts import speak
+
+    return Response(content=speak(body.text, voice=body.voice), media_type="audio/wav")
+
+
+@app.post("/api/asr")
+async def asr(request: Request) -> dict[str, str]:
+    """Raw audio bytes in (browser MediaRecorder blob), transcript out."""
+    from engram.voice.asr import transcribe
+
+    audio = await request.body()
+    mime = request.headers.get("content-type", "audio/webm")
+    return {"text": transcribe(audio, mime=mime)}
 
 
 @app.post("/api/end-session")

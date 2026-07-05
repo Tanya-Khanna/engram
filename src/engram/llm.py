@@ -99,6 +99,58 @@ def complete(
     return response
 
 
+NATIVE_BASE = "https://dashscope-intl.aliyuncs.com/api/v1"
+TTS_MODEL = os.getenv("ENGRAM_TTS_MODEL", "qwen3-tts-flash")
+ASR_MODEL = os.getenv("ENGRAM_ASR_MODEL", "qwen3-asr-flash")
+
+
+def _native(body: dict[str, Any], purpose: str) -> dict[str, Any]:
+    """DashScope-native endpoint (audio lives here, not on compatible-mode)."""
+    import httpx
+
+    start = time.monotonic()
+    response = _with_retries(
+        lambda: httpx.post(
+            f"{NATIVE_BASE}/services/aigc/multimodal-generation/generation",
+            json=body,
+            headers={"Authorization": f"Bearer {os.getenv('DASHSCOPE_API_KEY')}"},
+            timeout=120,
+        ).raise_for_status()
+    )
+    payload: dict[str, Any] = response.json()
+    usage = payload.get("usage", {})
+    metrics.log_call(
+        purpose=purpose,
+        model=body["model"],
+        prompt_tokens=usage.get("input_tokens", 0) or 0,
+        completion_tokens=usage.get("output_tokens", 0) or 0,
+        latency_ms=(time.monotonic() - start) * 1000,
+        session_id=SESSION_ID,
+    )
+    return payload
+
+
+def tts(text: str, voice: str = "Cherry") -> str:
+    """Text to speech. Returns a short-lived URL to the synthesized WAV."""
+    payload = _native(
+        {"model": TTS_MODEL, "input": {"text": text, "voice": voice}},
+        purpose="tts",
+    )
+    return str(payload["output"]["audio"]["url"])
+
+
+def asr(audio_data_uri: str) -> str:
+    """Speech to text. Takes a data URI or URL, returns the transcript."""
+    payload = _native(
+        {
+            "model": ASR_MODEL,
+            "input": {"messages": [{"role": "user", "content": [{"audio": audio_data_uri}]}]},
+        },
+        purpose="asr",
+    )
+    return str(payload["output"]["choices"][0]["message"]["content"][0]["text"])
+
+
 def embed(texts: list[str], purpose: str = "embedding") -> list[list[float]]:
     """Embedding endpoint on the same client — metered like everything else."""
     start = time.monotonic()
