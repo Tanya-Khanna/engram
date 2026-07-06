@@ -91,7 +91,7 @@ export default function App() {
       <div style={{ marginTop: 36 }}>
         <EngramField />
         <p className="label" style={{ marginTop: 8 }}>
-          fig. 0 : an engram field. pulses are recall. dust is decay. the
+          fig. 1 : an engram field. pulses are recall. dust is decay. the
           bright path is a relearn.
         </p>
       </div>
@@ -142,12 +142,12 @@ export default function App() {
         </dl>
         <figure className="figure" style={{ marginTop: 26 }}>
           <img
-            src="/chart3_freshness_lifecycle.png"
+            src="/chart3_freshness_lifecycle.png?v=2"
             alt="freshness over twelve days: decay, reverify, break, relearn"
             loading="lazy"
           />
           <figcaption>
-            fig. 1 : one procedure, twelve days. decay, reverify, the site
+            fig. 2 : one procedure, twelve days. decay, reverify, the site
             changes, relearn.
           </figcaption>
         </figure>
