@@ -127,14 +127,20 @@ def chart_lifecycle() -> None:
         (0.25, "dot", "invalid threshold (relearn)"),
     ):
         fig.add_hline(y=y, line={"color": DIM, "width": 1, "dash": dash})
-        fig.add_annotation(x=12, y=y, text=label, showarrow=False,
+        # labels live on the left where the curve never visits
+        fig.add_annotation(x=0.25, y=y + 0.03, text=label, showarrow=False,
                            font={"color": DIM, "size": 11},
-                           xanchor="right", yanchor="bottom")
-    shifts = {"reverified": (-30, -34), "site changed: replays fail": (0, 44),
-              "relearned → v2": (40, -30)}
+                           xanchor="left", yanchor="bottom")
+    # keyed by (event, day) so each label points into empty plot area
+    shifts = {
+        ("reverified", 3.0): (-46, -24),
+        ("site changed: replays fail", 6.0): (0, 44),
+        ("relearned → v2", 6.5): (52, -26),
+        ("reverified", 9.5): (-52, -26),
+    }
     for r in rows:
         if r["event"]:
-            dx, dy = shifts.get(r["event"], (0, -40))
+            dx, dy = shifts.get((r["event"], float(r["day"])), (0, -40))
             fig.add_annotation(
                 x=float(r["day"]), y=float(r["freshness"]), text=r["event"],
                 ax=dx, ay=dy, arrowcolor=ACCENT, arrowwidth=1.5,
@@ -143,8 +149,8 @@ def chart_lifecycle() -> None:
     fig.update_layout(
         _layout("one procedure's lifecycle: decay, reverify, break, relearn")
     )
-    fig.update_xaxes(title="days")
-    fig.update_yaxes(title="freshness", range=[0, 1.12])
+    fig.update_xaxes(title="days", range=[-0.15, 12.15])
+    fig.update_yaxes(title="freshness", range=[0, 1.18])
     _export(fig, "chart3_freshness_lifecycle.png", 1100, 480)
 
 

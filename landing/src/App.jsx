@@ -142,7 +142,7 @@ export default function App() {
         </dl>
         <figure className="figure" style={{ marginTop: 26 }}>
           <img
-            src="/chart3_freshness_lifecycle.png?v=2"
+            src="/chart3_freshness_lifecycle.png?v=3"
             alt="freshness over twelve days: decay, reverify, break, relearn"
             loading="lazy"
           />
